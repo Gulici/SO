@@ -9,16 +9,11 @@
 
 // Funkcja reprezentująca zachowanie filozofa
 void philosopherAsymmetric(int id) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist(100, 500); // Losowy czas oczekiwania
-
     for (int i = 0; i < 5; ++i) { // Każdy filozof je 5 razy
         {   
             std::lock_guard<std::mutex> lock(cout_mutex);
-            std::cout << "Filozof " << id << " myśli...\n";
+            std::cout << "Filozof " << id << " mysli " << i + 1 << " raz\n";
         }
-        // std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen))); // Filozof myśli przez losowy czas
         std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Filozof myśli przez ustalony czas
         
         int left_fork = id; // Lewy widelec
@@ -27,20 +22,35 @@ void philosopherAsymmetric(int id) {
         // Asymetryczne blokowanie w celu uniknięcia zakleszczenia
         // Filozof o parzystym ID najpierw bierze lewy widelec, a o nieparzystym prawy.
         if (id % 2 == 0) {
-            forks[left_fork].lock();
+            forks[left_fork].lock(); 
+            {
+                std::lock_guard<std::mutex> lock(cout_mutex);
+                std::cout << "Filozof " << id << " wzial lewy widelec o id: " << left_fork << "\n";
+            }
             forks[right_fork].lock();
+            {
+                std::lock_guard<std::mutex> lock(cout_mutex);
+                std::cout << "Filozof " << id << " wzial prawy widelec o id: " << right_fork << "\n";
+            }
         } else {
             forks[right_fork].lock();
+            {
+                std::lock_guard<std::mutex> lock(cout_mutex);
+                std::cout << "Filozof " << id << " wzial prawy widelec o id: " << right_fork << "\n";
+            }
             forks[left_fork].lock();
+            {
+                std::lock_guard<std::mutex> lock(cout_mutex);
+                std::cout << "Filozof " << id << " wzial lewy widelec o id: " << left_fork << "\n";
+            }
         }
         
         
         {   
             std::lock_guard<std::mutex> lock(cout_mutex);
-            std::cout << "Filozof " << id << " je...\n";
+            std::cout << "Filozof " << id << " je " << i + 1 << " raz\n";
         }
 
-        // std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen))); // Filozof je przez losowy czas
         std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Filozof je przez ustalony czas
         
         // Odkładanie widelców po zakończeniu jedzenia
@@ -50,7 +60,7 @@ void philosopherAsymmetric(int id) {
 
     {   
         std::lock_guard<std::mutex> lock(cout_mutex);
-        std::cout << "Filozof " << id << " skończył ucztę.\n";
+        std::cout << "Filozof " << id << " skonczyl uczte.\n";
     }
     
 }

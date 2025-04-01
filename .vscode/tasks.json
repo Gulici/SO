@@ -10,6 +10,7 @@
                 "src/main.cpp",
                 "src/asymmetric_block.cpp",
                 "src/symmetric_block.cpp",
+                "src/waiter_block.cpp",
                 "src/philosophers.cpp",
                 "-o",
                 "bin/main.exe",
